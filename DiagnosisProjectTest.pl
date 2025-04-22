@@ -1,101 +1,112 @@
-% Symptoms to be added/removed during runtime
+% --- Dynamic predicates ---
 :- dynamic symptom/2.
+:- dynamic current_patient/1.
 
-%--------------------------
-% Diagnosis Rules
-%--------------------------
+% --------------------------
+% Weighted Symptoms per Disease
+% --------------------------
 
-%Headache
-diagnosis(Patient, headaches) :-
-    symptom(Patient, headache).
+% Format: disease_symptom(Disease, Symptom, Weight)
+disease_symptom(headaches, headache, 5).
 
-%Cold
-diagnosis(Patient, cold) :-
-    symptom(Patient, cough),
-    symptom(Patient, sore_throat),
-    symptom(Patient, fever).
+disease_symptom(cold, cough, 4).
+disease_symptom(cold, sore_throat, 4).
+disease_symptom(cold, fever, 2).
 
-%Flu
-diagnosis(Patient, flu) :-
-    symptom(Patient, fever),
-    symptom(Patient, phlegm),
-    symptom(Patient, body_pains).
+disease_symptom(flu, fever, 3).
+disease_symptom(flu, phlegm, 3).
+disease_symptom(flu, body_pains, 4).
 
-%Measles
-diagnosis(Patient, measles) :-
-    symptom(Patient, fever),
-    symptom(Patient, running_nose),
-    symptom(Patient, watery_eyes),
-    symptom(Patient, small_white_spots_in_cheek),
-    symptom(Patient, rashes).
+disease_symptom(measles, fever, 3).
+disease_symptom(measles, running_nose, 2).
+disease_symptom(measles, watery_eyes, 2).
+disease_symptom(measles, small_white_spots_in_cheek, 5).
+disease_symptom(measles, rashes, 4).
 
-%Chickenpox
-diagnosis(Patient, chickenpox) :-
-    symptom(Patient, rashes),
-    symptom(Patient, headache),
-    symptom(Patient, stomachaces),
-    symptom(Patient, fatigue),
-    symptom(Patient, low_grade_fever).
+disease_symptom(chickenpox, rashes, 4).
+disease_symptom(chickenpox, headache, 3).
+disease_symptom(chickenpox, stomachaces, 2).
+disease_symptom(chickenpox, fatigue, 2).
+disease_symptom(chickenpox, low_grade_fever, 2).
 
-%Migraine
-diagnosis(Patient, migraine) :-
-    symptom(Patient, light_sensitive),
-    symptom(Patient, sound_sensitive),
-    symptom(Patient, headache),
-    symptom(Patient, nausea).
+disease_symptom(migraine, light_sensitive, 3).
+disease_symptom(migraine, sound_sensitive, 3).
+disease_symptom(migraine, headache, 4).
+disease_symptom(migraine, nausea, 2).
 
-%Strep Throat
-diagnosis(Patient, strep_throat) :-
-    symptom(Patient, fever),
-    symptom(Patient, swolen_tonsils),
-    symptom(Patient, swallowing_pain),
-    symptom(Patient, swollen_lymph_nodes).
+disease_symptom(strep_throat, fever, 3).
+disease_symptom(strep_throat, swolen_tonsils, 4).
+disease_symptom(strep_throat, swallowing_pain, 4).
+disease_symptom(strep_throat, swollen_lymph_nodes, 3).
 
-%Malaria
-diagnosis(Patient, malaria) :-
-    symptom(Patient, fever),
-    symptom(Patient, chills),
-    symptom(Patient, headache),
-    symptom(Patient, diarrhea),
-    symptom(Patient, discomfort),
-    symptom(Patient, nausea),
-    symptom(Patient, vomitting),
-    symptom(Patient, muscle_pain),
-    symptom(Patient, joint_pain),
-    symptom(Patient, abdominal_pain).
+disease_symptom(malaria, fever, 3).
+disease_symptom(malaria, chills, 3).
+disease_symptom(malaria, headache, 3).
+disease_symptom(malaria, diarrhea, 2).
+disease_symptom(malaria, discomfort, 2).
+disease_symptom(malaria, nausea, 2).
+disease_symptom(malaria, vomitting, 2).
+disease_symptom(malaria, muscle_pain, 2).
+disease_symptom(malaria, joint_pain, 2).
+disease_symptom(malaria, abdominal_pain, 2).
 
-%Pneumonia
-diagnosis(Patient, pneumonia) :-
-    symptom(Patient, cough),
-    symptom(Patient, short_breath),
-    symptom(Patient, high_temperature),
-    symptom(Patient, chest_pain),
-    symptom(Patient, body_ache),
-    symptom(Patient, appetite_loss),
-    symptom(Patient, wheezing).
+disease_symptom(pneumonia, cough, 3).
+disease_symptom(pneumonia, short_breath, 3).
+disease_symptom(pneumonia, high_temperature, 3).
+disease_symptom(pneumonia, chest_pain, 3).
+disease_symptom(pneumonia, body_ache, 2).
+disease_symptom(pneumonia, appetite_loss, 2).
+disease_symptom(pneumonia, wheezing, 2).
 
-%COVID-19
-diagnosis(Patient, covid_19) :-
-    symptom(Patient, fever),
-    symptom(Patient, cough),
-    symptom(Patient,loss_of_taste),
-    symptom(Patient, short_breath),
-    symptom(Patient, difficulty_breathing),
-    symptom(Patient, congestion),
-    symptom(Patient, fatigue),
-    symptom(Patient, sore_throat).
+disease_symptom(covid_19, fever, 3).
+disease_symptom(covid_19, cough, 3).
+disease_symptom(covid_19, loss_of_taste, 5).
+disease_symptom(covid_19, short_breath, 3).
+disease_symptom(covid_19, difficulty_breathing, 3).
+disease_symptom(covid_19, congestion, 2).
+disease_symptom(covid_19, fatigue, 2).
+disease_symptom(covid_19, sore_throat, 2).
 
-%Output
-print_diagnosis(Patient) :-
-    findall(Disease, diagnosis(Patient, Disease), Diseases),
-    Diseases \= [],
-    format('Based on your symptoms, you may have: ~w~n', [Diseases]).
-    %To prevent backtracking and showing multiple diseases at once
+% --------------------------
+% Diagnosis Ranking
+% --------------------------
 
-print_diagnosis(_) :-
-    writeln('We could not identify the sickeness based on the symptoms you have provided.').
+disease_score(Patient, Disease, Score) :-
+    setof(Weight, Sym^(
+        disease_symptom(Disease, Sym, Weight),
+        symptom(Patient, Sym)
+    ), Weights),
+    sum_list(Weights, Score),
+    Score > 0.
 
+print_ranked_diagnosis(Patient) :-
+    \+ disease_score(Patient, _, _),
+    writeln('We could not identify the sickness based on the symptoms you have provided.'), !.
+
+print_ranked_diagnosis(Patient) :-
+    setof(Score-Disease, disease_score(Patient, Disease, Score), ScoredList),
+    sort(0, @>=, ScoredList, Ranked),
+    writeln('Based on your symptoms, likely conditions are:'),
+    print_disease_scores(Ranked).
+
+print_disease_scores([]).
+print_disease_scores([Score-Disease | Rest]) :-
+    Score >= 3,
+    format('DEBUG: Raw - Disease: ~w, Score: ~w~n', [Disease, Score]),
+    ( atom(Disease) -> atom_string(Disease, DiseaseStr)
+    ; format('WARNING: Non-atom disease detected: ~w~n', [Disease]),
+      DiseaseStr = 'Unknown disease'
+    ),
+    format('~w: Score ~d~n', [DiseaseStr, Score]),
+    print_disease_scores(Rest).
+print_disease_scores([Score-_|Rest]) :-
+    Score < 3,
+    print_disease_scores(Rest).
+
+% --------------------------
 % Interactive Menu
+% --------------------------
+
 start :-
     writeln('--- Medical Diagnosis System ---'),
     writeln('1. Enter patient name'),
@@ -110,9 +121,6 @@ read_choice :-
     write('Choose an option (1-5): '),
     read(Choice),
     handle_choice(Choice).
-
-% Global variable to store patient name
-:- dynamic current_patient/1.
 
 handle_choice(1) :-
     write('Enter patient name: '),
@@ -134,7 +142,7 @@ handle_choice(2) :-
 
 handle_choice(3) :-
     current_patient(Patient) ->
-        (print_diagnosis(Patient), nl, start)
+        (print_ranked_diagnosis(Patient), nl, start)
     ;
         (writeln('Please set a patient name first.'), nl, start).
 
@@ -152,4 +160,3 @@ handle_choice(5) :-
 handle_choice(_) :-
     writeln('Invalid option. Please try again.'),
     nl, start.
-
