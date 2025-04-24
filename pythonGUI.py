@@ -11,6 +11,8 @@ root = tk.Tk()
 root.title("Medical Diagnosis System")
 root.geometry("500x600")
 root.configure(bg="#f0f0f5")
+current_patient_label = tk.Label(root, text="Current Patient: None", font=("Helvetica", 10), fg="blue")
+current_patient_label.pack(pady=(0, 10))
 
 # Variables
 patient_var = tk.StringVar()
@@ -24,6 +26,7 @@ def set_patient():
         list(prolog.query("retractall(current_patient(_))"))
         prolog.assertz(f"current_patient({patient})")
         messagebox.showinfo("Success", f"Patient set to '{patient}'")
+        current_patient_label.config(text=f"Current Patient: {patient}")
     else:
         messagebox.showwarning("Input Error", "Please enter a patient name.")
 
@@ -84,6 +87,7 @@ def clear_data():
 # Layout
 frame = ttk.Frame(root, padding=20)
 frame.pack(expand=True, fill='both')
+
 
 ttk.Label(frame, text="Patient Name:").pack(anchor='w')
 ttk.Entry(frame, textvariable=patient_var, width=40).pack(pady=5)

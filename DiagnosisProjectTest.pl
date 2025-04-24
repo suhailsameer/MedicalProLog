@@ -67,6 +67,53 @@ disease_symptom(covid_19, congestion, 2).
 disease_symptom(covid_19, fatigue, 2).
 disease_symptom(covid_19, sore_throat, 2).
 
+disease_symptom(typhoid_fever, fever, 3).
+disease_symptom(typhoid_fever, headache, 3).
+disease_symptom(typhoid_fever, stomach_pain, 3).
+disease_symptom(typhoid_fever, diarrhea, 3).
+disease_symptom(typhoid_fever, constipation, 3).
+disease_symptom(typhoid_fever, weakness, 3).
+disease_symptom(typhoid_fever, loss_of_appetite, 3).
+
+disease_symptpm(diabetes, excessive_thirst, 3).
+disease_symptom(diabetes, frequent_urination, 3).
+disease_symptom(diabetes, fatigue, 3).
+disease_symptom(diabetes, blurred_vision, 3).
+disease_symptom(diabetes, slow_healing_wounds, 3).
+disease_symptom(diabetes, weight_loss, 3).
+disease_symptom(diabetes, increased_hunger, 3).
+
+disease_symptom(hypertension, headache, 3).
+disease_symptom(hypertension, dizziness, 3).
+disease_symptom(hypertension, blurred_vision, 3).
+disease_symptom(hypertension, chest_pain, 3).
+disease_symptom(hypertension, short_breath, 3).
+disease_symptom(hypertension, irregular_heartbeat, 3).
+
+disease_symptom(asthma, short_breath, 3).
+disease_symptom(asthma, wheezing, 3).
+disease_symptom(asthma, coughing, 3).
+disease_symptom(asthma, chest_tightness, 3).
+disease_symptom(asthma, fatigue, 3).
+
+disease_symptom(arthritis, joint_pain, 3).
+disease_symptom(arthritis, stiffness, 3).
+disease_symptom(arthritis, swelling, 3).
+disease_symptom(arthritis, reduced_range_of_motion, 3).
+disease_symptom(arthritis, redness, 3).
+
+disease_symptom(sprain, swelling, 3).
+disease_symptom(sprain, bruising, 3).
+disease_symptom(sprain, pain, 3).
+disease_symptom(sprain, limited_movement, 3).
+
+disease_ymptom(fracture, swelling, 3).
+disease_symptom(fracture, bruising, 3).
+disease_symptom(fracture, pain, 3).
+disease_symptom(fracture, limited_movement, 3).
+disease_symptom(fracture, deformity, 3).
+diseasse_symptom(fracture, crepitus, 3).
+
 % --------------------------
 % Diagnosis Ranking
 % --------------------------
